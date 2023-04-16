@@ -1,0 +1,61 @@
+
+R version 3.6.2 (2019-12-12) -- "Dark and Stormy Night"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ###################################################
+> #####         SVM linear & SVM Radial         #####
+> ###################################################
+> 
+> library(caret)
+Loading required package: ggplot2
+Loading required package: lattice
+> setwd("/home/rxxwang/biostat626")
+> load("midterm_data.RData")
+> ctrl = trainControl(method = "repeatedcv", repeats = 10)
+> 
+> # SVM linear
+> set.seed(323)
+> model.svm.l1 <- train(result1~., data=data1, method = "svmLinear", trControl = ctrl)
+> model.svm.l1$results
+  C  Accuracy     Kappa   AccuracySD     KappaSD
+1 1 0.9999227 0.9998418 0.0003073177 0.000629242
+> test.svm.l1 <- predict(model.svm.l1, newdata = test)
+> submit = data.frame(
++   test.svm.l1 = as.numeric(test.svm.l1)-1
++ )
+> write.table(submit, file = "binary_1015_svmlinear.txt", 
++             row.names = F, col.names = F)
+> 
+> # SVM radial
+> set.seed(324)
+> model.svm.r1 <- train(result1~., data=data1, method = "svmRadial", trControl = ctrl)
+> model.svm.r1$results
+        sigma    C  Accuracy     Kappa   AccuracySD     KappaSD
+1 0.002089757 0.25 0.9986352 0.9972064 0.0011974856 0.002450530
+2 0.002089757 0.50 0.9988927 0.9977332 0.0010673893 0.002184729
+3 0.002089757 1.00 0.9991888 0.9983391 0.0009270225 0.001897791
+> test.svm.r1 <- predict(model.svm.r1, newdata = test)
+> submit = data.frame(
++   test.svm.r1 = as.numeric(test.svm.r1)-1
++ )
+> write.table(submit, file = "binary_1015_svmradial.txt", 
++             row.names = F, col.names = F)
+> 
+> proc.time()
+    user   system  elapsed 
+1446.765    8.879 1461.941 

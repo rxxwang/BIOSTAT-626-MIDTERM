@@ -1,0 +1,74 @@
+
+R version 3.6.2 (2019-12-12) -- "Dark and Stormy Night"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ###################################################
+> #####                   KNN                   #####
+> ###################################################
+> 
+> setwd("/home/rxxwang/biostat626")
+> load("midterm_data.RData")
+> library(caret)
+Loading required package: ggplot2
+Loading required package: lattice
+> 
+> set.seed(328)
+> ctrl = trainControl(method = "repeatedcv", repeats = 10)
+> model.knn1 <- train(result1 ~ ., data = data1, method = "knn", 
++                     trControl = ctrl, tuneLength = 30)
+> model.knn1$results
+    k  Accuracy     Kappa  AccuracySD     KappaSD
+1   5 0.9980042 0.9959156 0.001513376 0.003095165
+2   7 0.9978496 0.9955996 0.001627316 0.003327986
+3   9 0.9978368 0.9955732 0.001551628 0.003173298
+4  11 0.9975020 0.9948887 0.001715120 0.003506761
+5  13 0.9972317 0.9943363 0.001869842 0.003821982
+6  15 0.9970643 0.9939940 0.001885157 0.003853484
+7  17 0.9966652 0.9931785 0.002038717 0.004166217
+8  19 0.9965365 0.9929155 0.002084142 0.004258790
+9  21 0.9963176 0.9924680 0.002102786 0.004296139
+10 23 0.9960601 0.9919418 0.002124970 0.004341200
+11 25 0.9956996 0.9912054 0.002143825 0.004378835
+12 27 0.9954679 0.9907321 0.002184478 0.004461452
+13 29 0.9952618 0.9903116 0.002262728 0.004620222
+14 31 0.9950043 0.9897860 0.002352691 0.004802643
+15 33 0.9947983 0.9893653 0.002350182 0.004797325
+16 35 0.9946567 0.9890761 0.002388886 0.004876164
+17 37 0.9946051 0.9889709 0.002398255 0.004895329
+18 39 0.9945664 0.9888920 0.002404529 0.004907835
+19 41 0.9944634 0.9886818 0.002438581 0.004977096
+20 43 0.9943218 0.9883930 0.002503502 0.005109153
+21 45 0.9942575 0.9882616 0.002512390 0.005127292
+22 47 0.9942445 0.9882354 0.002578464 0.005261834
+23 49 0.9941287 0.9879989 0.002571068 0.005246706
+24 51 0.9939870 0.9877099 0.002575878 0.005256355
+25 53 0.9937939 0.9873156 0.002545458 0.005193675
+26 55 0.9936137 0.9869485 0.002708076 0.005523620
+27 57 0.9934721 0.9866595 0.002704230 0.005515507
+28 59 0.9933691 0.9864497 0.002790146 0.005690105
+29 61 0.9932403 0.9861870 0.002790113 0.005689847
+30 63 0.9932017 0.9861082 0.002788407 0.005686375
+> pred.knn1 <- predict(model.knn1, newdata = test)
+> submit = data.frame(
++   pred.knn1 = as.numeric(pred.knn1)-1
++ )
+> write.table(submit, file = "binary_1015_knn.txt", row.names = F, col.names = F)
+> 
+> proc.time()
+     user    system   elapsed 
+29072.411    37.446 29181.661 

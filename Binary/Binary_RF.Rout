@@ -1,0 +1,50 @@
+
+R version 3.6.2 (2019-12-12) -- "Dark and Stormy Night"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ##################################################
+> #####              Random Forest             #####
+> ##################################################
+> 
+> setwd("/home/rxxwang/biostat626")
+> load("midterm_data.RData")
+> library(caret)
+Loading required package: ggplot2
+Loading required package: lattice
+> 
+> ctrl = trainControl(method = "repeatedcv", repeats = 10)
+> sqtmtry<- round(sqrt(ncol(data1) - 1))
+> rfGrid <- expand.grid(mtry = c(round(sqtmtry / 2), sqtmtry, 2 * sqtmtry))
+> set.seed(330)
+> model.rf1 <- train(result1 ~ . , data = data1, method = "rf", 
++                    ntree = 500, tuneGrid = rfGrid, trControl = ctrl, 
++                    importance = TRUE)
+> model.rf1$results
+  mtry  Accuracy     Kappa   AccuracySD     KappaSD
+1   12 0.9992661 0.9984970 0.0009376247 0.001920233
+2   24 0.9992532 0.9984705 0.0009540836 0.001954113
+3   48 0.9993176 0.9986022 0.0009762073 0.001999575
+> save(model.rf1, file = "model.rf1.RData")
+> pred.rf1 <- predict(model.rf1, newdata = test)
+> submit = data.frame(pred.rf1 = as.numeric(pred.rf1) - 1)
+> write.table(submit, file = "binary_1015_rf.txt",
++             row.names = F, col.names = F)
+> 
+> proc.time()
+     user    system   elapsed 
+27702.495    47.437 27837.150 
