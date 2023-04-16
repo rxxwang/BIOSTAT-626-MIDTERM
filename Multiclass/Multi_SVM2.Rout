@@ -1,0 +1,86 @@
+
+R version 3.6.2 (2019-12-12) -- "Dark and Stormy Night"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> #####################################################
+> #####      Multiclass SVM linear & Radial2      #####
+> #####################################################
+> 
+> setwd("/home/rxxwang/biostat626")
+> load("midterm_data2.RData")
+> library(caret)
+Loading required package: ggplot2
+Loading required package: lattice
+> 
+> ctrl = trainControl(method = "repeatedcv", repeats = 10)
+> set.seed(434)
+> model.svm.l2.1 <- train(result2~., data=data2.1, method = "svmLinear", 
++                         trControl = ctrl)
+> model.svm.l2.1$results
+  C  Accuracy     Kappa  AccuracySD      KappaSD
+1 1 0.9998783 0.9998167 0.000599078 0.0009023979
+> test.svm.l2.1 <- predict(model.svm.l2.1, newdata = test1)
+> test.svm.l2.1  = as.numeric(test.svm.l2.1)
+> model.svm.l2.2 <- train(result2~., data=data2.2, method = "svmLinear", 
++                         trControl = ctrl)
+> model.svm.l2.2$results
+  C  Accuracy     Kappa  AccuracySD     KappaSD
+1 1 0.9711893 0.9594412 0.006586934 0.009274459
+> test.svm.l2.2 <- predict(model.svm.l2.2, newdata = test2)
+> test.svm.l2.2  = as.numeric(test.svm.l2.2) + 3
+> 
+> result = rep(0, dim(test)[1])
+> result[t.num1] = test.svm.l2.1
+> result[t.num2] = test.svm.l2.2
+> submit = data.frame(
++   result = result
++ )
+> write.table(submit, file = "multiclass_1015_svmlinear2.txt", row.names = F, col.names = F)
+> 
+> ctrl = trainControl(method = "repeatedcv", repeats = 10)
+> set.seed(434)
+> model.svm.r2.1 <- train(result2~., data=data2.1, method = "svmRadial", 
++                         trControl = ctrl)
+> model.svm.r2.1$results
+        sigma    C  Accuracy     Kappa   AccuracySD     KappaSD
+1 0.001213486 0.25 0.9975656 0.9963337 0.0029665823 0.004467242
+2 0.001213486 0.50 0.9990266 0.9985342 0.0016115529 0.002426602
+3 0.001213486 1.00 0.9996657 0.9994966 0.0009558339 0.001439175
+> test.svm.r2.1 <- predict(model.svm.r2.1, newdata = test1)
+> test.svm.r2.1  = as.numeric(test.svm.r2.1)
+> model.svm.r2.2 <- train(result2~., data=data2.2, method = "svmRadial", 
++                         trControl = ctrl)
+> model.svm.r2.2$results
+        sigma    C  Accuracy     Kappa  AccuracySD    KappaSD
+1 0.002700777 0.25 0.9475736 0.9264928 0.010439422 0.01459429
+2 0.002700777 0.50 0.9570372 0.9397157 0.008857927 0.01240364
+3 0.002700777 1.00 0.9664767 0.9529167 0.008149361 0.01142566
+> test.svm.r2.2 <- predict(model.svm.r2.2, newdata = test2)
+> test.svm.r2.2  = as.numeric(test.svm.r2.2) + 3
+> 
+> result = rep(0, dim(test)[1])
+> result[t.num1] = test.svm.r2.1
+> result[t.num2] = test.svm.r2.2
+> submit = data.frame(
++   result = result
++ )
+> write.table(submit, file = "multiclass_1015_svmradial2.txt", row.names = F, col.names = F)
+> 
+> proc.time()
+    user   system  elapsed 
+3675.252    8.486 3693.182 

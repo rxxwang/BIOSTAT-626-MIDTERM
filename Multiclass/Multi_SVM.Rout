@@ -1,0 +1,58 @@
+
+R version 3.6.2 (2019-12-12) -- "Dark and Stormy Night"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ####################################################
+> #####      Multiclass SVM linear & Radial      #####
+> ####################################################
+> 
+> setwd("/home/rxxwang/biostat626")
+> load("midterm_data.RData")
+> library(caret)
+Loading required package: ggplot2
+Loading required package: lattice
+> 
+> ctrl = trainControl(method = "repeatedcv", repeats = 10)
+> set.seed(434)
+> model.svm.l2 <- train(result2~., data=data2, method = "svmLinear", trControl = ctrl)
+> model.svm.l2$results
+  C  Accuracy     Kappa  AccuracySD     KappaSD
+1 1 0.9834556 0.9803843 0.004077755 0.004834328
+> test.svm.l2 <- predict(model.svm.l2, newdata = test)
+> submit = data.frame(
++   test.svm.l2 = as.numeric(test.svm.l2)
++ )
+> write.table(submit, file = "multiclass_1015_svmlinear.txt", row.names = F, col.names = F)
+> 
+> ctrl = trainControl(method = "repeatedcv", repeats = 10)
+> set.seed(435)
+> model.svm.r2 <- train(result2~., data=data2, method = "svmRadial", trControl = ctrl)
+> model.svm.r2$results
+        sigma    C  Accuracy     Kappa  AccuracySD     KappaSD
+1 0.002002092 0.25 0.9619806 0.9549294 0.005696338 0.006748114
+2 0.002002092 0.50 0.9719081 0.9666985 0.005203335 0.006166001
+3 0.002002092 1.00 0.9784870 0.9744954 0.004463534 0.005291149
+> test.svm.r2 <- predict(model.svm.r2, newdata = test)
+> submit = data.frame(
++   test.svm.r2 = as.numeric(test.svm.r2)
++ )
+> write.table(submit, file = "multiclass_1015_svmradial.txt", row.names = F, col.names = F)
+> 
+> proc.time()
+    user   system  elapsed 
+5878.537   37.957 5931.186 
